@@ -12,19 +12,17 @@ import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import static com.mojang.text2speech.Narrator.LOGGER;
 public class GiveMeSomeLightClient implements ClientModInitializer {
     private BlockPos lastPlayerPos;
 
     @Override
     public void onInitializeClient() {
-        LOGGER.info("Hello Fabric Client!");
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player != null) {
                 PlayerEntity player = MinecraftClient.getInstance().player;
                 ClientWorld world = MinecraftClient.getInstance().world;
                 BlockPos playerPos = new BlockPos((int) player.getX(), (int) (player.getY() + player.getEyeHeight(player.getPose())), (int) player.getZ());
-                if (world.getLightLevel(playerPos) <= 10){
+                if (world.getLightLevel(playerPos) < 11){
 
 
                 Item mainHandItem = client.player.getMainHandStack().getItem();
@@ -43,10 +41,6 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
                         removeBlock(playerPos);
                     }
                 }
-            }else {
-                    if (client.world.getBlockState(playerPos).getBlock() == Blocks.LIGHT) {
-                        removeBlock(playerPos);
-                    }
                 }
             }
         });

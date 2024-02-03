@@ -29,6 +29,8 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
                         | client.player.getOffHandStack().getItem() == Items.PEARLESCENT_FROGLIGHT	) {
 
                     client.player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 1, 0, false, false, false));
+                }else if (client.player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION))){
+                    client.player.removeStatusEffect(StatusEffects.NIGHT_VISION);
                 }
             }
         });

@@ -31,8 +31,6 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
                 if (!playerPos.equals(lastPlayerPos)) {
                     removeBlock(lastPlayerPos);
                 }
-
-
                 if (isLightItem(mainHandItem) || isLightItem(offHandItem)) {
                     placeBlock(playerPos);
                     lastPlayerPos = playerPos;
@@ -47,7 +45,6 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
     }
 
     private void placeBlock(BlockPos pos) {
-
         ClientWorld world = MinecraftClient.getInstance().world;
         if (world.getBlockState(pos).getBlock() == Blocks.AIR) {
             world.setBlockState(pos, Blocks.LIGHT.getDefaultState());
@@ -68,9 +65,23 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
 
     private boolean isLightItem(Item item) {
         return item == Items.TORCH ||
+                item == Items.SOUL_TORCH ||
+                item == Items.REDSTONE_TORCH ||
+                item == Items.REDSTONE_LAMP ||
+                item == Items.SEA_LANTERN ||
+                item == Items.SOUL_LANTERN ||
+                item == Items.GLOWSTONE ||
+                item == Items.SHROOMLIGHT ||
+                item == Items.MAGMA_BLOCK ||
+                item == Items.LAVA_BUCKET ||
+                item == Items.SOUL_CAMPFIRE ||
+                item == Items.CAMPFIRE ||
                 item == Items.LANTERN ||
                 item == Items.OCHRE_FROGLIGHT ||
                 item == Items.VERDANT_FROGLIGHT ||
+                item == Items.END_CRYSTAL ||
+                item == Items.END_ROD ||
+                item == Items.JACK_O_LANTERN ||
                 item == Items.PEARLESCENT_FROGLIGHT;
     }
 }

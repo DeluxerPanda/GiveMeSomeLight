@@ -10,8 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 public class GiveMeSomeLightClient implements ClientModInitializer {
     private BlockPos lastPlayerPos;
 
@@ -22,7 +21,6 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
                 PlayerEntity player = MinecraftClient.getInstance().player;
                 ClientWorld world = MinecraftClient.getInstance().world;
                 BlockPos playerPos = new BlockPos((int) player.getX(), (int) (player.getY() + player.getEyeHeight(player.getPose())), (int) player.getZ());
-                if (world.getLightLevel(playerPos) < 11){
 
 
                 Item mainHandItem = client.player.getMainHandStack().getItem();
@@ -40,7 +38,6 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
                     }
                 }
                 }
-            }
         });
     }
 

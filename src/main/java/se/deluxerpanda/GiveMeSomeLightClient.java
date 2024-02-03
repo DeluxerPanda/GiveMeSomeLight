@@ -2,6 +2,10 @@ package se.deluxerpanda;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
@@ -10,6 +14,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
+import net.minecraft.world.BlockView;
+import net.minecraft.world.gen.stateprovider.BlockStateProvider;
+import net.minecraft.world.gen.stateprovider.BlockStateProviderType;
 
 public class GiveMeSomeLightClient implements ClientModInitializer {
     private BlockPos lastPlayerPos;
@@ -40,7 +48,6 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
                 }
         });
     }
-
     private void placeBlock(BlockPos pos) {
         ClientWorld world = MinecraftClient.getInstance().world;
         if (world.getBlockState(pos).getBlock() == Blocks.AIR) {

@@ -19,8 +19,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.LightType;
+import net.minecraft.world.World;
 import net.minecraft.world.gen.stateprovider.BlockStateProvider;
 import net.minecraft.world.gen.stateprovider.BlockStateProviderType;
+import org.spongepowered.asm.launch.MixinBootstrap;
+import org.spongepowered.asm.mixin.MixinEnvironment;
+import org.spongepowered.asm.mixin.Mixins;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -45,7 +49,8 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
                         removeBlock(lastPlayerPos);
                     }
                     if (Items.isLightItem(mainHandItem) || Items.isLightItem(offHandItem)) {
-                        placeBlock(playerPos);
+                     //   placeBlock(playerPos);
+
                         lastPlayerPos = playerPos;
                     } else {
                         if (client.world.getBlockState(playerPos).getBlock() == Blocks.LIGHT) {
@@ -57,6 +62,7 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
     }
     private void placeBlock(BlockPos pos) {
         ClientWorld world = MinecraftClient.getInstance().world;
+
         if (world.getBlockState(pos).getBlock() == Blocks.AIR) {
             world.setBlockState(pos, Blocks.LIGHT.getDefaultState());
 

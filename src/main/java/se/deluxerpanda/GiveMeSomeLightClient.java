@@ -31,7 +31,9 @@ import java.lang.reflect.Field;
 import java.util.function.ToIntFunction;
 
 public class GiveMeSomeLightClient implements ClientModInitializer {
-    private BlockPos lastPlayerPos;
+    private BlockPos lastPlayerPosHead;
+    private BlockPos lastPlayerPosFoot;
+    private BlockPos lastPlayerPosOverHead;
 
     @Override
     public void onInitializeClient() {
@@ -40,22 +42,50 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
                 PlayerEntity player = MinecraftClient.getInstance().player;
                 ClientWorld world = MinecraftClient.getInstance().world;
 
-                BlockPos playerPos1 = BlockPos.ofFloored(player.getPos());
-                BlockPos playerPos = playerPos1.up();
+                BlockPos playerPos = BlockPos.ofFloored(player.getPos());
+
                     Item mainHandItem = client.player.getMainHandStack().getItem();
                     Item offHandItem = client.player.getOffHandStack().getItem();
 
-                    if (!playerPos.equals(lastPlayerPos)) {
-                        removeBlock(lastPlayerPos);
+                //Player over Head
+                BlockPos playerPosOverHead = playerPos.up(2);
+                if (!playerPosOverHead.equals(lastPlayerPosOverHead)) {
+                    removeBlock(lastPlayerPosOverHead);
+                }
+                if (Items.isLightItem(mainHandItem) || Items.isLightItem(offHandItem)) {
+                       placeBlock(playerPosOverHead);
+                     lastPlayerPosOverHead = playerPosOverHead;
+                } else {
+                    if (client.world.getBlockState(playerPosOverHead).getBlock() == Blocks.LIGHT) {
+                        removeBlock(playerPosOverHead);
+                    }
+                }
+
+                    //Player Head
+                     BlockPos playerPosHead = playerPos.up();
+                    if (!playerPosHead.equals(lastPlayerPosHead)) {
+                        removeBlock(lastPlayerPosHead);
                     }
                     if (Items.isLightItem(mainHandItem) || Items.isLightItem(offHandItem)) {
-                     //   placeBlock(playerPos);
-
-                        lastPlayerPos = playerPos;
+                        placeBlock(playerPosHead);
+                        lastPlayerPosHead = playerPosHead;
                     } else {
-                        if (client.world.getBlockState(playerPos).getBlock() == Blocks.LIGHT) {
-                            removeBlock(playerPos);
+                        if (client.world.getBlockState(playerPosHead).getBlock() == Blocks.LIGHT) {
+                            removeBlock(playerPosHead);
                         }
+                }
+                    //Player foot
+                BlockPos playerPosFoot = playerPos.down(0);
+                if (!playerPosFoot.equals(lastPlayerPosFoot)) {
+                    removeBlock(lastPlayerPosFoot);
+                }
+                if (Items.isLightItem(mainHandItem) || Items.isLightItem(offHandItem)) {
+                    placeBlock(playerPosFoot);
+                    lastPlayerPosFoot = playerPosFoot;
+                } else {
+                    if (client.world.getBlockState(playerPosFoot).getBlock() == Blocks.LIGHT) {
+                        removeBlock(playerPosFoot);
+                    }
                 }
             }
         });

@@ -20,9 +20,6 @@
 		],
 		"client": [
 			"se.deluxerpanda.GiveMeSomeLightClient"
-		],
-		"fabric-datagen": [
-			"se.deluxerpanda.GiveMeSomeLightDataGenerator"
 		]
 	},
 	"mixins": [

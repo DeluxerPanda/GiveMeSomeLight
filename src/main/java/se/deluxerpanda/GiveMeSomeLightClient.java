@@ -2,108 +2,86 @@ package se.deluxerpanda;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.LightType;
-import net.minecraft.world.World;
-import net.minecraft.world.gen.stateprovider.BlockStateProvider;
-import net.minecraft.world.gen.stateprovider.BlockStateProviderType;
-import org.spongepowered.asm.launch.MixinBootstrap;
-import org.spongepowered.asm.mixin.MixinEnvironment;
-import org.spongepowered.asm.mixin.Mixins;
 
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.util.function.ToIntFunction;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GiveMeSomeLightClient implements ClientModInitializer {
-    private BlockPos lastPlayerPosHead;
-    private BlockPos lastPlayerPosFoot;
-    private BlockPos lastPlayerPosOverHead;
+    private BlockPos lastPlayerPos;
 
     @Override
     public void onInitializeClient() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player != null) {
+
                 PlayerEntity player = MinecraftClient.getInstance().player;
                 ClientWorld world = MinecraftClient.getInstance().world;
 
-                BlockPos playerPos = BlockPos.ofFloored(player.getPos());
+                Item mainHandItem = client.player.getMainHandStack().getItem();
+                Item offHandItem = client.player.getOffHandStack().getItem();
 
-                    Item mainHandItem = client.player.getMainHandStack().getItem();
-                    Item offHandItem = client.player.getOffHandStack().getItem();
+                BlockPos currentPlayerPos = BlockPos.ofFloored(player.getPos());
 
-                //Player over Head
-                BlockPos playerPosOverHead = playerPos.up(2);
-                if (!playerPosOverHead.equals(lastPlayerPosOverHead)) {
-                    removeBlock(lastPlayerPosOverHead);
-                }
                 if (Items.isLightItem(mainHandItem) || Items.isLightItem(offHandItem)) {
-                       placeBlock(playerPosOverHead);
-                     lastPlayerPosOverHead = playerPosOverHead;
-                } else {
-                    if (client.world.getBlockState(playerPosOverHead).getBlock() == Blocks.LIGHT) {
-                        removeBlock(playerPosOverHead);
+                    placeLightBlocks(world, currentPlayerPos);
+                // Check if player has moved
+                if (!currentPlayerPos.equals(lastPlayerPos)) {
+                    // Remove light blocks from previous position
+                    if (lastPlayerPos != null) {
+                        removeLightBlocks(world, lastPlayerPos);
                     }
-                }
 
-                    //Player Head
-                     BlockPos playerPosHead = playerPos.up();
-                    if (!playerPosHead.equals(lastPlayerPosHead)) {
-                        removeBlock(lastPlayerPosHead);
-                    }
-                    if (Items.isLightItem(mainHandItem) || Items.isLightItem(offHandItem)) {
-                        placeBlock(playerPosHead);
-                        lastPlayerPosHead = playerPosHead;
-                    } else {
-                        if (client.world.getBlockState(playerPosHead).getBlock() == Blocks.LIGHT) {
-                            removeBlock(playerPosHead);
-                        }
+                    // Place light blocks around current player position
+                    placeLightBlocks(world, currentPlayerPos);
+
+                    // Update lastPlayerPos to current position
+                    lastPlayerPos = currentPlayerPos;
                 }
-                    //Player foot
-                BlockPos playerPosFoot = playerPos.down(0);
-                if (!playerPosFoot.equals(lastPlayerPosFoot)) {
-                    removeBlock(lastPlayerPosFoot);
-                }
-                if (Items.isLightItem(mainHandItem) || Items.isLightItem(offHandItem)) {
-                    placeBlock(playerPosFoot);
-                    lastPlayerPosFoot = playerPosFoot;
-                } else {
-                    if (client.world.getBlockState(playerPosFoot).getBlock() == Blocks.LIGHT) {
-                        removeBlock(playerPosFoot);
-                    }
+            } else {
+                    removeLightBlocks(world, currentPlayerPos);
                 }
             }
         });
     }
-    private void placeBlock(BlockPos pos) {
-        ClientWorld world = MinecraftClient.getInstance().world;
 
-        if (world.getBlockState(pos).getBlock() == Blocks.AIR) {
-            world.setBlockState(pos, Blocks.LIGHT.getDefaultState());
-
+    private void placeLightBlocks(ClientWorld world, BlockPos centerPos) {
+        // Place light blocks in a specific pattern around the centerPos
+        for (int x = -2; x <= 2; x++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int z = -2; z <= 2; z++) {
+                    BlockPos blockPos = centerPos.add(x, y, z);
+                    if (world.getBlockState(blockPos).getBlock() == Blocks.AIR) {
+                        world.setBlockState(blockPos, Blocks.LIGHT.getDefaultState());
+                    }
+                }
+            }
         }
     }
-    private void removeBlock(BlockPos pos) {
-        ClientWorld world = MinecraftClient.getInstance().world;
-        if (pos != null && world.getBlockState(pos).getBlock() == Blocks.LIGHT) {
-            world.setBlockState(pos, Blocks.AIR.getDefaultState());
+
+    private void removeLightBlocks(ClientWorld world, BlockPos centerPos) {
+        // Remove light blocks in the same pattern around the centerPos
+        for (int x = -2; x <= 2; x++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int z = -2; z <= 2; z++) {
+                    BlockPos blockPos = centerPos.add(x, y, z);
+                    if (world.getBlockState(blockPos).getBlock() == Blocks.LIGHT) {
+                        world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
+                    }
+                }
+            }
         }
     }
+
+
 
     private boolean isPlayerInRestrictedArea(Entity player) {
         return player.isInFluid() || player.isInLava() || player.isTouchingWater();

@@ -8,8 +8,8 @@
 		"DeluxerPanda"
 	],
 	"contact": {
-		"homepage": "https://Deluxerpanda.se/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://DeluxerPanda.se",
+		"sources": "https://github.com/DeluxerPanda/GiveMeSomeLight"
 	},
 	"license": "MIT License",
 	"icon": "assets/givemesomelight/icon.png",
@@ -22,16 +22,8 @@
 			"se.deluxerpanda.GiveMeSomeLightClient"
 		]
 	},
-	"mixins": [
-		"givemesomelight.mixins.json"
-	],
 	"depends": {
-		"fabricloader": ">=0.15.0",
-		"minecraft": "~1.21.4",
 		"java": ">=21",
 		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
 	}
 }

@@ -2,24 +2,22 @@ package se.deluxerpanda;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.LightType;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 public class GiveMeSomeLightClient implements ClientModInitializer {
     private BlockPos lastPlayerPos;
-
+    boolean isLight = false;
     @Override
     public void onInitializeClient() {
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player != null) {
 
@@ -29,48 +27,42 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
                 Item mainHandItem = client.player.getMainHandStack().getItem();
                 Item offHandItem = client.player.getOffHandStack().getItem();
 
-                BlockPos currentPlayerPos = BlockPos.ofFloored(player.getPos());
+                    BlockPos currentPlayerPos = BlockPos.ofFloored(Objects.requireNonNull(player).getPos());
 
                 if (Items.isLightItem(mainHandItem) || Items.isLightItem(offHandItem)) {
+                    if (!currentPlayerPos.equals(lastPlayerPos) && lastPlayerPos != null) {
+                            removeLightBlocks(world, lastPlayerPos);
+                    }
                     placeLightBlocks(world, currentPlayerPos);
-                // Check if player has moved
-                if (!currentPlayerPos.equals(lastPlayerPos)) {
-                    // Remove light blocks from previous position
+                    lastPlayerPos = currentPlayerPos;
+                    isLight = true;
+                }else{
+                    if (isLight){
                     if (lastPlayerPos != null) {
                         removeLightBlocks(world, lastPlayerPos);
                     }
-
-                    // Place light blocks around current player position
-                    placeLightBlocks(world, currentPlayerPos);
-
-                    // Update lastPlayerPos to current position
-                    lastPlayerPos = currentPlayerPos;
-                }
-            } else {
                     removeLightBlocks(world, currentPlayerPos);
+                        isLight = false;
+                }
                 }
             }
         });
     }
-
     private void placeLightBlocks(ClientWorld world, BlockPos centerPos) {
-        // Place light blocks in a specific pattern around the centerPos
         for (int x = -2; x <= 2; x++) {
-            for (int y = -1; y <= 1; y++) {
+            for (int y = -4; y <= 4; y++) {
                 for (int z = -2; z <= 2; z++) {
                     BlockPos blockPos = centerPos.add(x, y, z);
                     if (world.getBlockState(blockPos).getBlock() == Blocks.AIR) {
-                        world.setBlockState(blockPos, Blocks.LIGHT.getDefaultState());
+                        world.setBlockState(blockPos, Blocks.LIGHT.getDefaultState().with(Properties.LEVEL_15, 12));
                     }
                 }
             }
         }
     }
-
     private void removeLightBlocks(ClientWorld world, BlockPos centerPos) {
-        // Remove light blocks in the same pattern around the centerPos
         for (int x = -2; x <= 2; x++) {
-            for (int y = -1; y <= 1; y++) {
+            for (int y = -4; y <= 4; y++) {
                 for (int z = -2; z <= 2; z++) {
                     BlockPos blockPos = centerPos.add(x, y, z);
                     if (world.getBlockState(blockPos).getBlock() == Blocks.LIGHT) {
@@ -81,9 +73,4 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
         }
     }
 
-
-
-    private boolean isPlayerInRestrictedArea(Entity player) {
-        return player.isInFluid() || player.isInLava() || player.isTouchingWater();
-    }
 }

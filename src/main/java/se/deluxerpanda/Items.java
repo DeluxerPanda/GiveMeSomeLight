@@ -23,6 +23,10 @@ public class Items {
          item == net.minecraft.item.Items.END_CRYSTAL ||
          item == net.minecraft.item.Items.END_ROD ||
          item == net.minecraft.item.Items.JACK_O_LANTERN ||
+         item == net.minecraft.item.Items.BEACON ||
+         item == net.minecraft.item.Items.GLOW_ITEM_FRAME ||
+         item == net.minecraft.item.Items.GLOW_LICHEN ||
+         item == net.minecraft.item.Items.GLOW_INK_SAC ||
          item == net.minecraft.item.Items.PEARLESCENT_FROGLIGHT;
     }
 }

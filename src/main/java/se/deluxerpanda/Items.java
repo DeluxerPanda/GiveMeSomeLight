@@ -8,7 +8,6 @@ public class Items {
          item == net.minecraft.item.Items.TORCH ||
          item == net.minecraft.item.Items.SOUL_TORCH ||
          item == net.minecraft.item.Items.REDSTONE_TORCH ||
-         item == net.minecraft.item.Items.REDSTONE_LAMP ||
          item == net.minecraft.item.Items.SEA_LANTERN ||
          item == net.minecraft.item.Items.SOUL_LANTERN ||
          item == net.minecraft.item.Items.GLOWSTONE ||
@@ -27,6 +26,15 @@ public class Items {
          item == net.minecraft.item.Items.GLOW_ITEM_FRAME ||
          item == net.minecraft.item.Items.GLOW_LICHEN ||
          item == net.minecraft.item.Items.GLOW_INK_SAC ||
+         item == net.minecraft.item.Items.COPPER_TORCH ||
+         item == net.minecraft.item.Items.COPPER_LANTERNS.exposed() ||
+         item == net.minecraft.item.Items.COPPER_LANTERNS.oxidized() ||
+         item == net.minecraft.item.Items.COPPER_LANTERNS.unaffected() ||
+         item == net.minecraft.item.Items.COPPER_LANTERNS.waxed() ||
+         item == net.minecraft.item.Items.COPPER_LANTERNS.waxedExposed() ||
+         item == net.minecraft.item.Items.COPPER_LANTERNS.waxedOxidized() ||
+         item == net.minecraft.item.Items.COPPER_LANTERNS.weathered() ||
+         item == net.minecraft.item.Items.COPPER_LANTERNS.waxedWeathered() ||
          item == net.minecraft.item.Items.PEARLESCENT_FROGLIGHT;
     }
 }

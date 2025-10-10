@@ -27,7 +27,7 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
                 Item mainHandItem = client.player.getMainHandStack().getItem();
                 Item offHandItem = client.player.getOffHandStack().getItem();
 
-                    BlockPos currentPlayerPos = BlockPos.ofFloored(Objects.requireNonNull(player).getPos());
+                    BlockPos currentPlayerPos = BlockPos.ofFloored(Objects.requireNonNull(player).getEntityPos());
 
                 if (Items.isLightItem(mainHandItem) || Items.isLightItem(offHandItem)) {
                     if (!currentPlayerPos.equals(lastPlayerPos) && lastPlayerPos != null) {

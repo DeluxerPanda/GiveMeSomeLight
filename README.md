@@ -3,6 +3,6 @@
 </div>
 
 ### - [Features]
-- You can see in the dark if you hold a torch in your left or right hand. <a href="https://github.com/DeluxerPanda/GiveMeSomeLight/blob/master/src/main/java/se/deluxerpanda/Items.java">(See full list of what you can use)</a>
+- You can see in the dark if you hold a torch in your left or right hand and all items that emit light when placed (list coming soon)
 ### - [Dependence]
 - <a href="https://modrinth.com/mod/fabric-api">Fabric API</a>

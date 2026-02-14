@@ -9,7 +9,8 @@
 	],
 	"contact": {
 		"homepage": "https://DeluxerPanda.se",
-		"sources": "https://github.com/DeluxerPanda/GiveMeSomeLight"
+		"sources": "https://github.com/DeluxerPanda/GiveMeSomeLight",
+		"issues": "https://github.com/DeluxerPanda/GiveMeSomeLight/issues"
 	},
 	"license": "MIT License",
 	"icon": "assets/givemesomelight/icon.png",
@@ -22,8 +23,14 @@
 			"se.deluxerpanda.GiveMeSomeLightClient"
 		]
 	},
+	"mixins": [
+		"mixins.json"
+	],
 	"depends": {
 		"java": ">=21",
 		"fabric-api": "*"
+	},
+	"suggests": {
+		"sodium": "*"
 	}
 }

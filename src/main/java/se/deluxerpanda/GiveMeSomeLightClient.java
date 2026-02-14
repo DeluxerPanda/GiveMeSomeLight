@@ -2,75 +2,58 @@ package se.deluxerpanda;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-
-import java.util.Objects;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 
 public class GiveMeSomeLightClient implements ClientModInitializer {
-    private BlockPos lastPlayerPos;
-    boolean isLight = false;
+
+    public static final Minecraft client = Minecraft.getInstance();
+    public static boolean isLightItem(Item item) {
+        if (!(item instanceof BlockItem blockItem)) return false;
+        return blockItem.getBlock().defaultBlockState().getLightEmission() > 0;
+    }
     @Override
     public void onInitializeClient() {
-
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player != null) {
+            var player = client.player;
+            var world = client.level;
+            if (player == null || world == null) return;
 
-                PlayerEntity player = MinecraftClient.getInstance().player;
-                ClientWorld world = MinecraftClient.getInstance().world;
+            BlockPos playerPos = player.blockPosition();
 
-                Item mainHandItem = client.player.getMainHandStack().getItem();
-                Item offHandItem = client.player.getOffHandStack().getItem();
-
-                    BlockPos currentPlayerPos = BlockPos.ofFloored(Objects.requireNonNull(player).getEntityPos());
-
-                if (Items.isLightItem(mainHandItem) || Items.isLightItem(offHandItem)) {
-                    if (!currentPlayerPos.equals(lastPlayerPos) && lastPlayerPos != null) {
-                            removeLightBlocks(world, lastPlayerPos);
+            for (int x = -14; x <= 14; x++) {
+                for (int y = -14; y <= 14; y++) {
+                    for (int z = -14; z <= 14; z++) {
+                        BlockPos pos = playerPos.offset(x, y, z);
+                        world.sendBlockUpdated(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
                     }
-                    placeLightBlocks(world, currentPlayerPos);
-                    lastPlayerPos = currentPlayerPos;
-                    isLight = true;
-                }else{
-                    if (isLight){
-                    if (lastPlayerPos != null) {
-                        removeLightBlocks(world, lastPlayerPos);
-                    }
-                    removeLightBlocks(world, currentPlayerPos);
-                        isLight = false;
-                }
                 }
             }
         });
     }
-    private void placeLightBlocks(ClientWorld world, BlockPos centerPos) {
-        for (int x = -2; x <= 2; x++) {
-            for (int y = -4; y <= 4; y++) {
-                for (int z = -2; z <= 2; z++) {
-                    BlockPos blockPos = centerPos.add(x, y, z);
-                    if (world.getBlockState(blockPos).getBlock() == Blocks.AIR) {
-                        world.setBlockState(blockPos, Blocks.LIGHT.getDefaultState().with(Properties.LEVEL_15, 12));
-                    }
-                }
-            }
-        }
-    }
-    private void removeLightBlocks(ClientWorld world, BlockPos centerPos) {
-        for (int x = -2; x <= 2; x++) {
-            for (int y = -4; y <= 4; y++) {
-                for (int z = -2; z <= 2; z++) {
-                    BlockPos blockPos = centerPos.add(x, y, z);
-                    if (world.getBlockState(blockPos).getBlock() == Blocks.LIGHT) {
-                        world.setBlockState(blockPos, Blocks.AIR.getDefaultState());
-                    }
-                }
-            }
-        }
-    }
 
+    public static int getDynamicLightLevel(BlockPos pos, int lightmap) {
+        LocalPlayer player = client.player;
+        if (player == null) return lightmap;
+
+        boolean holdingLightItem = isLightItem(player.getMainHandItem().getItem()) ||
+                isLightItem(player.getOffhandItem().getItem());
+        if (!holdingLightItem) return lightmap;
+
+        double dx = player.getX() - (pos.getX());
+        double dy = player.getY() - (pos.getY());
+        double dz = player.getZ() - (pos.getZ());
+        double distSq = dx * dx + dy * dy + dz * dz;
+
+        if (distSq <= 196) {
+            int dynamic;
+            dynamic = (int) Math.max(0, (14) * (1 - Math.sqrt(distSq) / 14));
+            return Math.max(lightmap, dynamic);
+        }
+
+        return lightmap;
+    }
 }

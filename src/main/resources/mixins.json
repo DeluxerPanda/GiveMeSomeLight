@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "se.deluxerpanda.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": [
+    "AoCalculatorMixin",
+    "EntityRendererMixin",
+    "BlockLightSectionStorageMixin",
+    "Sodium.ArrayLightDataCacheMixin",
+    "Sodium.FlatLightPipelineMixin",
+    "Sodium.LightDataAccessMixin"
+  ]
+}

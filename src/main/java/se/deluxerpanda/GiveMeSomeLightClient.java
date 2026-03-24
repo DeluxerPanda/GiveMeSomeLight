@@ -2,11 +2,22 @@ package se.deluxerpanda;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GiveMeSomeLightClient implements ClientModInitializer {
 
@@ -15,11 +26,19 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
         if (!(item instanceof BlockItem blockItem)) return false;
         return blockItem.getBlock().defaultBlockState().getLightEmission() > 0;
     }
+    private final boolean GenDocCheck = FabricLoader.getInstance().isDevelopmentEnvironment();
     @Override
     public void onInitializeClient() {
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             var player = client.player;
             var world = client.level;
+            if (client.player != null) {
+                if (GenDocCheck) {
+                    getLightItemsToDoc();
+                }
+            }
+
             if (player == null || world == null) return;
 
             BlockPos playerPos = player.blockPosition();
@@ -55,5 +74,37 @@ public class GiveMeSomeLightClient implements ClientModInitializer {
         }
 
         return lightmap;
+    }
+
+
+    private void getLightItemsToDoc() {
+        StringBuilder md = new StringBuilder();
+        md.append("# Light list  - Minecraft: ").append(FabricLoader.getInstance().getRawGameVersion())
+                .append("\n\n --- \n\n");
+
+        Set<Item> seenItems = new HashSet<>();
+
+        for (Block block : BuiltInRegistries.BLOCK) {
+            if (block.defaultBlockState().getLightEmission() > 0) {
+
+                Item item = block.asItem();
+
+                if (item.getDefaultInstance().getItem() instanceof BlockItem && !seenItems.contains(item)) {
+
+                    ItemStack stack = new ItemStack(item);
+
+                    md.append("* ## ").append(stack.getHoverName().getString()).append("\n\n");
+                    seenItems.add(item);
+                }
+            }
+        }
+        md.append("---");
+        try {
+            Path path = Paths.get("Light-list.md");
+            Files.writeString(path, md.toString());
+            GiveMeSomeLight.LOGGER.info("Markdown exported with English names!");
+        } catch (IOException e) {
+            e.fillInStackTrace();
+        }
     }
 }

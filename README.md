@@ -3,6 +3,6 @@
 </div>
 
 ### - [Features]
-- You can see in the dark if you hold a torch in your left or right hand and all items that emit light when placed (list coming soon)
+- You can see in the dark if you hold a torch in your left or right hand and all items that emit light when placed. Light list [Here](Light-list.md)
 ### - [Dependence]
 - <a href="https://modrinth.com/mod/fabric-api">Fabric API</a>

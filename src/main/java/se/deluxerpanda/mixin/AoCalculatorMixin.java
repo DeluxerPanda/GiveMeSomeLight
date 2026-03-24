@@ -1,6 +1,6 @@
 package se.deluxerpanda.mixin;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,7 +16,8 @@ public abstract class AoCalculatorMixin {
     @Dynamic
     @Inject(method = "getLightmapCoordinates", at = @At(value = "RETURN", ordinal = 0), require = 0, cancellable = true, remap = false)
     private static void onGetLightmapCoordinates(BlockAndTintGetter level, BlockState state, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
-        if (!level.getBlockState(pos).isSolidRender())
+        if (!level.getBlockState(pos).isSolidRender()){
         cir.setReturnValue(GiveMeSomeLightClient.getDynamicLightLevel(pos,cir.getReturnValue()));
-    }
+        }
+        }
 }

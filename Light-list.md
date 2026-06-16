@@ -1,4 +1,4 @@
-# Light list  - Minecraft: 26.1.2
+# Light list  - Minecraft: 26.2
 
  --- 
 

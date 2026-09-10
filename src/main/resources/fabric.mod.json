@@ -13,8 +13,8 @@
 		"issues": "https://github.com/DeluxerPanda/GiveMeSomeLight/issues"
 	},
 	"license": "MIT License",
-	"icon": "assets/givemesomelight/icon.png",
-	"environment": "*",
+	"icon": "assets/givemesomelight/GiveMeSomeLight_logo.png",
+	"environment": "client",
 	"entrypoints": {
 		"main": [
 			"se.deluxerpanda.GiveMeSomeLight"
